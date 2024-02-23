@@ -9,6 +9,7 @@ def cln():
 
 # Wrapping in a Border with any two symbols
 
+#This is test of git
 
 def frameMsg(msg, firstSymbol, secondSymbol):
     lineMsg = (firstSymbol + secondSymbol) * int(len(msg) / 1.5)
