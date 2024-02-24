@@ -1,7 +1,8 @@
 import os
 import json
 
-def getHeroData():
+
+def get_hero_data():
     try:
         with open('session/data.json', 'r', encoding='utf-8') as f:
             loaded_data = json.load(f)
@@ -10,7 +11,7 @@ def getHeroData():
         return None
 
 
-def getHeroStat():
+def get_hero_stat():
     try:
         with open('session/character_statistics.json', 'r', encoding='utf-8') as f:
             # return json.dumps(json.load(f), indent=4, ensure_ascii=False)
@@ -20,13 +21,14 @@ def getHeroStat():
     return None
 
 
-
-def pushHeroData(data):
+def push_hero_data(data):
     with open('session/data.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def pushHeroStats(data):
+def push_hero_stats(data):
     with open('session/character_statistics.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-print(getHeroStat()['Сила'])
+
+
+print(get_hero_stat()['Сила'])

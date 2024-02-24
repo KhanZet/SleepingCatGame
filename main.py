@@ -10,23 +10,23 @@ def cln():
 # Wrapping in a Border with any two symbols
 
 
-def frameMsg(msg, firstSymbol, secondSymbol):
-    lineMsg = (firstSymbol + secondSymbol) * int(len(msg) / 1.5)
-    if list(lineMsg)[-1] == secondSymbol:
-        lineMsg += firstSymbol
-    spaceLen = (len(lineMsg) - len(msg) - 2) // 2
-    outputMessage = firstSymbol + ' ' * spaceLen + msg + spaceLen * ' '
+def frame_msg(msg, first_symbol, second_symbol):
+    line_msg = (first_symbol + second_symbol) * int(len(msg) / 1.5)
+    if list(line_msg)[-1] == second_symbol:
+        line_msg += first_symbol
+    spaceLen = (len(line_msg) - len(msg) - 2) // 2
+    outputMessage = first_symbol + ' ' * spaceLen + msg + spaceLen * ' '
     if len(outputMessage) % 2 == 1:
-        outputMessage += ' ' + firstSymbol
+        outputMessage += ' ' + first_symbol
     else:
-        outputMessage += firstSymbol
-    print(lineMsg)
+        outputMessage += first_symbol
+    print(line_msg)
     print(outputMessage)
-    print(lineMsg)
+    print(line_msg)
 # DATA FUNCTIONS
 
 
-def getHeroData():
+def get_hero_data():
     try:
         with open('session/data.json', 'r', encoding='utf-8') as f:
             loaded_data = json.load(f)
@@ -35,7 +35,7 @@ def getHeroData():
         return None
 
 
-def getHeroStat():
+def get_hero_stat():
     try:
         with open('session/character_statistics.json', 'r', encoding='utf-8') as f:
             loaded_data = json.load(f)
@@ -44,17 +44,17 @@ def getHeroStat():
         return None
 
 
-def pushHeroData(data):
+def push_hero_data(data):
     with open('session/data.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def pushHeroStats(data):
+def push_hero_stats(data):
     with open('session/character_statistics.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-print(getHeroData())
+print(get_hero_data())
 
 
 class SleepingCatGame:
@@ -67,7 +67,7 @@ class SleepingCatGame:
         print("ZZZzz /,`.-'`'    -.  ;-;;,_")
         print("     |,4-  ) )-,_. ,\\ (\\")
         print("    '---''(_/--'  `-'\\_)")
-        frameMsg("Добро пожаловать в комнату спящего Котика", '*', '-')
+        frame_msg("Добро пожаловать в комнату спящего Котика", '*', '-')
         print("[1] Играть\n[2] Выйти")
         while not self.success:
             try:
@@ -81,12 +81,12 @@ class SleepingCatGame:
                 else:
                     print(
                         'Неправильное число. Пожалуйста выберите 1 для игры, и 2 для выхода из игры')
-            except ValueError as e:
+            except ValueError:
                 print("введен неверный тип данных")
 
     def play_game(self):
-        heroData = getHeroData()
-        if(heroData is not None):
+        heroData = get_hero_data()
+        if heroData is not None:
             print(f"С возращением, {heroData['name']}!")
             print(f"Твой персонаж {heroData['race']} с классом {heroData['class']}")
             print('Желаешь продолжить, или начать заново?')
@@ -111,12 +111,13 @@ class SleepingCatGame:
             self.start_new_game()
         self.success = True
 
-    def start_new_game(self):
+    @staticmethod
+    def start_new_game():
         cln()
         print('Выбор за тобой!')
         choosing_hero = ChoosingHero()
         chosen_race, chosen_class, chosen_name = choosing_hero.choose_hero()
-        pushHeroData({
+        push_hero_data({
             'name': chosen_name,
             'race': chosen_race,
             'class': chosen_class
@@ -153,7 +154,8 @@ class ChoosingHero:
         chosen_name = input('\nКак зовут героя?\n')
         return chosen_race, chosen_class, chosen_name
 
-    def get_choice(self, options_count):
+    @staticmethod
+    def get_choice(options_count):
         choice = 0
 
         while choice < 1 or choice > options_count:
@@ -170,7 +172,7 @@ class Scene:
     """docstring for Scene"""
 
     def __init__(self):
-        self.heroData = getHeroData()
+        self.heroData = get_hero_data()
 
 
 if __name__ == "__main__":
