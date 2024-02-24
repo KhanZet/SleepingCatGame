@@ -1,30 +1,107 @@
 import json
 import os
 
+
 # Console Functions
 
 
 def cln():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# Wrapping in a Border with any two symbols
+
+# Text formatting functions
+
+# Giving max length of pairs in dictionary in string type
+def get_max_length(data):
+    max_length = 0
+    for key, value in data.items():
+        current_length = 0
+        if isinstance(value, dict):
+            current_length = len(f"{key}: {value["current"]}/{value['max']}")
+        elif isinstance(value, list):
+            pass
+        else:
+            current_length = len(f"{key}: {value}")
+        if current_length > max_length:
+            max_length = current_length
+    return max_length
+
+
+# Formatting each line to needed format
+def format_string(data_stat, window_width):
+    total_string = ""
+    current_length = 0
+    formatted_value = ""
+    for key, value in data_stat.items():
+        if isinstance(value, dict):
+            current_length = len(f"{key}: {value['current']}/{value['max']}")
+            formatted_value = f"{key}: {value['current']}/{value['max']}"
+        elif isinstance(value, list):
+            pass
+        else:
+            current_length = len(f"{key}: {value}")
+            formatted_value = f"{key}: {value}"
+        space_padding = " " * (window_width - current_length + 1)
+        total_string += f"║ {formatted_value}{space_padding}║\n"
+    return total_string
+
+
+# Contain list of words in window width with format
+
+def move_words(dict_name, words_list, window_width):
+    total_string = f"║ {dict_name}: "
+    current_line_length = len(total_string) - 2
+    for word in words_list:
+        word_length = len(word) + 2
+        if current_line_length + word_length > window_width:
+            total_string += f"{" " * (window_width - current_line_length + 1)}║"
+            total_string += "\n"
+            current_line_length = 0
+        if current_line_length == 0:
+            total_string += "║ "
+        total_string += word + ', '
+        current_line_length += word_length
+    return total_string[:-2] + f"{" " * (window_width - current_line_length + 3)}║\n"
+
+
+# Main function that return total string to print
+
+def stat_msg(data_hero, data_stat):
+    window_name = f"Статистика {data_hero['name']}"
+    window_width = 0
+    print(get_max_length(data_stat))
+    if get_max_length(data_stat) > len(window_name):
+        window_width = get_max_length(data_stat)
+
+    else:
+        window_width = len(window_name)
+    simple_line = f"╠{'═' * (window_width + 2)}╣\n"
+    first_line = f"╔{'═' * (window_width + 2)}╗\n"
+    second_line = f"║ {window_name + " " * (window_width - len(window_name))} ║\n"
+    last_line = f"╚{'═' * (window_width + 2)}╝"
+    msg_array = [first_line, second_line, simple_line, format_string(data_stat, window_width),
+                 move_words("Заклинания", data_stat["Заклинания"], window_width), last_line]
+    return "".join(msg_array)
 
 
 def frame_msg(msg, first_symbol, second_symbol):
     line_msg = (first_symbol + second_symbol) * int(len(msg) / 1.5)
     if list(line_msg)[-1] == second_symbol:
         line_msg += first_symbol
-    spaceLen = (len(line_msg) - len(msg) - 2) // 2
-    outputMessage = first_symbol + ' ' * spaceLen + msg + spaceLen * ' '
-    if len(outputMessage) % 2 == 1:
-        outputMessage += ' ' + first_symbol
+    space_len = (len(line_msg) - len(msg) - 2) // 2
+    output_message = first_symbol + ' ' * space_len + msg + space_len * ' '
+    if len(output_message) % 2 == 1:
+        output_message += ' ' + first_symbol
     else:
-        outputMessage += first_symbol
+        output_message += first_symbol
     print(line_msg)
-    print(outputMessage)
+    print(output_message)
     print(line_msg)
-# DATA FUNCTIONS
 
+
+# =======================================================================================================================
+
+# DATA FUNCTIONS
 
 def get_hero_data():
     try:
@@ -54,8 +131,9 @@ def push_hero_stats(data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-print(get_hero_data())
+# ================================================================================================================
 
+# Game Classes
 
 class SleepingCatGame:
     def __init__(self):
@@ -85,10 +163,10 @@ class SleepingCatGame:
                 print("введен неверный тип данных")
 
     def play_game(self):
-        heroData = get_hero_data()
-        if heroData is not None:
-            print(f"С возращением, {heroData['name']}!")
-            print(f"Твой персонаж {heroData['race']} с классом {heroData['class']}")
+        hero_data = get_hero_data()
+        if hero_data is not None:
+            print(f"С возращением, {hero_data['name']}!")
+            print(f"Твой персонаж {hero_data['race']} с классом {hero_data['class']}")
             print('Желаешь продолжить, или начать заново?')
             print('[1] Продолжить\n[2] Начать заново\n')
             choice = int(input())
@@ -111,8 +189,7 @@ class SleepingCatGame:
             self.start_new_game()
         self.success = True
 
-    @staticmethod
-    def start_new_game():
+    def start_new_game(self):
         cln()
         print('Выбор за тобой!')
         choosing_hero = ChoosingHero()
@@ -124,6 +201,11 @@ class SleepingCatGame:
         })
         cln()
         print(f"\nВы выбрали {chosen_race} класса {chosen_class} под именем {chosen_name}. Игра начинается.")
+        answer = input("Выберите действия [1] Статистика [2] Выйти из игры\n")
+        if answer == '1':
+            print(stat_msg(get_hero_data(), get_hero_stat()))
+        elif answer == '2':
+            self.success = True
 
     def exit_game(self):
         print('Exiting game.')
@@ -172,8 +254,10 @@ class Scene:
     """docstring for Scene"""
 
     def __init__(self):
-        self.heroData = get_hero_data()
+        self.hero_data = get_hero_data()
 
+
+# =========================================================================
 
 if __name__ == "__main__":
     game = SleepingCatGame()
