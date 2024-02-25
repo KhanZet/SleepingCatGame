@@ -9,7 +9,7 @@ def cln():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-# Text formatting functions
+# Text formatting functions>>>>
 
 # Giving max length of pairs in dictionary in string type
 def get_max_length(data):
@@ -17,7 +17,7 @@ def get_max_length(data):
     for key, value in data.items():
         current_length = 0
         if isinstance(value, dict):
-            current_length = len(f"{key}: {value["current"]}/{value['max']}")
+            current_length = len(f"{key}: {value['current']}/{value['max']}")
         elif isinstance(value, list):
             pass
         else:
@@ -43,13 +43,15 @@ def format_string(data_stat, window_width):
             formatted_value = f"{key}: {value}"
         space_padding = " " * (window_width - current_length + 1)
         total_string += f"║ {formatted_value}{space_padding}║\n"
-    return total_string
+    return "\n".join(total_string.strip().split('\n')[:-1]) + "\n"
 
 
 # Contain list of words in window width with format
 
 def move_words(dict_name, words_list, window_width):
     total_string = f"║ {dict_name}: "
+    if not words_list:
+        words_list.append("Отсутствуют")
     current_line_length = len(total_string) - 2
     for word in words_list:
         word_length = len(word) + 2
@@ -194,6 +196,81 @@ class SleepingCatGame:
         print('Выбор за тобой!')
         choosing_hero = ChoosingHero()
         chosen_race, chosen_class, chosen_name = choosing_hero.choose_hero()
+        initial_attributes = {
+            "Воин": {
+                "Сила": 4,
+                "Ловкость": 3,
+                "Мудрость": 2,
+                "Интеллект": 1,
+                "Выносливость": 6
+            },
+            "Маг": {
+                "Сила": 1,
+                "Ловкость": 2,
+                "Мудрость": 5,
+                "Интеллект": 6,
+                "Выносливость": 2
+            },
+            "Паладин": {
+                "Сила": 3,
+                "Ловкость": 2,
+                "Мудрость": 4,
+                "Интеллект": 4,
+                "Выносливость": 3
+            },
+            "Лучник": {
+                "Сила": 2,
+                "Ловкость": 5,
+                "Мудрость": 2,
+                "Интеллект": 3,
+                "Выносливость": 4
+            },
+            "Некромант": {
+                "Сила": 2,
+                "Ловкость": 2,
+                "Мудрость": 6,
+                "Интеллект": 5,
+                "Выносливость": 3
+            },
+            "Друид": {
+                "Сила": 3,
+                "Ловкость": 3,
+                "Мудрость": 5,
+                "Интеллект": 4,
+                "Выносливость": 3
+            },
+            "Шаман": {
+                "Сила": 2,
+                "Ловкость": 4,
+                "Мудрость": 4,
+                "Интеллект": 3,
+                "Выносливость": 3
+            }
+        }
+        hero_stat = initial_attributes[chosen_class]
+        push_hero_stats({
+            'Имя': chosen_name,
+            'Уровень': 1,
+            'Здоровье': {
+                "current": hero_stat['Выносливость'] * 10,
+                "max": hero_stat['Выносливость'] * 10
+            },
+            'Мана': {
+                "current": hero_stat['Интеллект'] * 10,
+                "max": hero_stat['Интеллект'] * 10
+            },
+            'Опыт': {
+                'current': 0,
+                'max': 1000
+            },
+            'Сила': hero_stat['Сила'],
+            'Ловкость': hero_stat['Ловкость'],
+            'Мудрость': hero_stat['Мудрость'],
+            'Интеллект': hero_stat['Интеллект'],
+            'Выносливость': hero_stat['Выносливость'],
+            'Золото': 0,
+            'Заклинания': [],
+        })
         push_hero_data({
             'name': chosen_name,
             'race': chosen_race,
